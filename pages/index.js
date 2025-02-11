@@ -1,8 +1,9 @@
 import styles from "@/styles/Home.module.css";
 import ProductLink from "./productlink";
+import API_URL from "@/config";
 
 export async function getStaticProps() {
-  const res = await fetch('http://localhost:3000/productsforindex.json');
+  const res = await fetch(`${API_URL}/productsforindex.json`);
   const products = await res.json();
 
   return {
