@@ -1,11 +1,13 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
 import styles from "../styles/Home.module.css";
-import API_URL from "@/config";
+import path from "path";
+import fs from "fs";
 
 export async function getStaticPaths() {
-  const req = await fetch(`${API_URL}/productsforindex.json`);
-  const products = await req.json();
+  const filePath = path.join(process.cwd(), "public", "productsforindex.json");
+  const jsonData = fs.readFileSync(filePath);
+  const products = JSON.parse(jsonData);
 
   const paths = products.map((product) => ({
     params: { id: product.id.toString() },
@@ -15,13 +17,14 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const req = await fetch(`${API_URL}/productsforindex.json`);
-  const products = await req.json();
+  const filePath = path.join(process.cwd(), "public", "productsforindex.json");
+  const jsonData = fs.readFileSync(filePath);
+  const products = JSON.parse(jsonData);
   const product = products.find((product) => product.id === params.id);
 
   if (!product) {
     return {
-      notFound: true,  // 404ページにリダイレクト
+      notFound: true, // 404ページにリダイレクト
     };
   }
 
@@ -40,9 +43,7 @@ const Product = ({ product }) => {
         <h1>{product.name}のページです</h1>
         <img src={product.image} width="300" height="400" />
         <br />
-        <Link href="/">
-          商品一覧へ
-        </Link>
+        <Link href="/">商品一覧へ</Link>
       </main>
     </div>
   );
