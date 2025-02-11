@@ -2,7 +2,18 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import styles from "../styles/Home.module.css";
 
-export async function getServerSideProps({ params }) {
+export async function getStaticPaths() {
+  const req = await fetch(`http://localhost:3000/productsforindex.json`);
+  const products = await req.json();
+
+  const paths = products.map((product) => ({
+    params: { id: product.id.toString() },
+  }));
+
+  return { paths, fallback: false };
+}
+
+export async function getStaticProps({ params }) {
   const req = await fetch(`http://localhost:3000/productsforindex.json`);
   const products = await req.json();
   const product = products.find((product) => product.id === params.id);
